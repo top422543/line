@@ -32,7 +32,6 @@
       <select id="currency">
         <option value="TWD">TWD (新台幣)</option>
         <option value="JPY">JPY (日幣)</option>
-        <option value="USD">USD (美金)</option>
       </select>
     </div>
 
@@ -41,7 +40,7 @@
       <select id="payment">
         <option value="現金">現金</option>
         <option value="信用卡">信用卡</option>
-        <option value="LINE Pay">LINE Pay</option>
+        <option value="IC Card">西瓜卡</option>
       </select>
     </div>
 
@@ -49,8 +48,9 @@
       <label>4. 與那些人平分</label>
       <div class="checkbox-group">
         <label class="checkbox-item"><input type="checkbox" name="share" value="Iris"> Iris</label>
-        <label class="checkbox-item"><input type="checkbox" name="share" value="Tina"> Tina</label>
         <label class="checkbox-item"><input type="checkbox" name="share" value="Jim"> Jim</label>
+        <label class="checkbox-item"><input type="checkbox" name="share" value="Tina"> Tina</label>
+        <label class="checkbox-item"><input type="checkbox" name="share" value="Queena"> Queena</label>
       </div>
     </div>
 
@@ -59,7 +59,7 @@
 
   <script>
     // 💡 步驟二拿到 LIFF ID 後，請把下面這行的 '請替換成您的_LIFF_ID' 改掉！
-    const MY_LIFF_ID = '2011273788-BT5hI6Ex'; 
+    const MY_LIFF_ID = '2011274147-FHXLRTeg'; 
 
     liff.init({ liffId: MY_LIFF_ID })
       .then(() => {
