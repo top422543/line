@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>記帳收集器</title>
+  <!-- 引入 LINE LIFF SDK -->
+  <script src="https://line-scdn.net"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f4f6f9; padding: 20px; color: #333; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type="number"], select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+    .checkbox-group { display: flex; flex-direction: column; gap: 8px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; }
+    input[type="checkbox"] { width: 20px; height: 20px; }
+    button { width: 100%; padding: 12px; background-color: #06C755; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button:hover { background-color: #05b04b; }
+  </style>
+</head>
+<body>
+
+  <h2>💰 記帳收集器</h2>
+  <form id="expenseForm">
+    <div class="form-group">
+      <label for="amount">1. 金額</label>
+      <input type="number" id="amount" placeholder="請輸入金額" required min="1">
+    </div>
+
+    <div class="form-group">
+      <label for="currency">2. 幣別</label>
+      <select id="currency">
+        <option value="TWD">TWD (新台幣)</option>
+        <option value="JPY">JPY (日幣)</option>
+        <option value="USD">USD (美金)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="payment">3. 支付方式</label>
+      <select id="payment">
+        <option value="現金">現金</option>
+        <option value="信用卡">信用卡</option>
+        <option value="LINE Pay">LINE Pay</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>4. 與那些人平分</label>
+      <div class="checkbox-group">
+        <label class="checkbox-item"><input type="checkbox" name="share" value="Iris"> Iris</label>
+        <label class="checkbox-item"><input type="checkbox" name="share" value="Tina"> Tina</label>
+        <label class="checkbox-item"><input type="checkbox" name="share" value="Jim"> Jim</label>
+      </div>
+    </div>
+
+    <button type="button" id="submitBtn">確認送出並發送</button>
+  </form>
+
+  <script>
+    // 💡 步驟二拿到 LIFF ID 後，請把下面這行的 '請替換成您的_LIFF_ID' 改掉！
+    const MY_LIFF_ID = '請替換成您的_LIFF_ID'; 
+
+    liff.init({ liffId: MY_LIFF_ID })
+      .then(() => {
+        if (!liff.isLoggedIn()) {
+          liff.login();
+        }
+      })
+      .catch((err) => { console.error('LIFF 初始化失敗', err); });
+
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      const amount = document.getElementById('amount').value;
+      if (!amount) { alert('請輸入金額！'); return; }
+
+      const currency = document.getElementById('currency').value;
+      const payment = document.getElementById('payment').value;
+      
+      const sharedPeople = Array.from(document.querySelectorAll('input[name="share"]:checked'))
+                                .map(el => el.value)
+                                .join(',');
+
+      const today = new Date().toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      
+      liff.getProfile().then(profile => {
+        const userName = profile.displayName; 
+        const messageText = `${userName}|${today}|${payment}|${amount}|${currency}|${sharedPeople}`;
+
+        liff.sendMessages([{
+          type: 'text',
+          text: messageText
+        }])
+        .then(() => {
+          liff.closeWindow(); 
+        })
+        .catch((err) => {
+          alert('發送失敗！請確保您是在 LINE 聊天室內打開此連結。');
+          console.error(err);
+        });
+      }).catch(err => {
+        alert('無法取得使用者資料，請確認權限。');
+      });
+    });
+  </script>
+</body>
+</html>
